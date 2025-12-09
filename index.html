@@ -14,7 +14,6 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        textarea::-webkit-scrollbar { width: 0px; background: transparent; }
         
         /* Animasi Loader */
         .typing-indicator span {
@@ -30,9 +29,15 @@
         .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
         .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
         @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+
+        /* Custom Scrollbar untuk Dropdown Bahasa */
+        .lang-scrollbar::-webkit-scrollbar { width: 6px; }
+        .lang-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .lang-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+        .lang-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
     </style>
 </head>
-<body class="bg-[#050505] text-white min-h-screen flex flex-col items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black">
+<body class="bg-[#050505] text-white min-h-screen flex flex-col items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black" onclick="closeDropdown(event)">
 
     <div class="text-center mb-6">
         <h1 class="text-3xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 tracking-tight">
@@ -47,7 +52,7 @@
                 <div class="px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
                     Auto Detect
                 </div>
-                <button onclick="clearText()" class="text-xs text-slate-500 hover:text-white transition px-2 py-1">Hapus</button>
+                <button onclick="clearText()" class="text-xs text-slate-500 hover:text-white transition px-2 py-1">Clear</button>
             </div>
             
             <textarea id="inputText" 
@@ -60,27 +65,33 @@
         </div>
 
         <div class="flex-1 p-5 flex flex-col bg-[#0a0a0a]/50 relative">
-            <div class="flex justify-between items-center mb-3">
-                <select id="targetLang" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs md:text-sm outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 transition cursor-pointer hover:bg-white/10 w-40 md:w-auto">
-                    <option value="id" selected>🇮🇩 Indonesia</option>
-                    <option value="en">🇺🇸 English</option>
-                    <option value="ja">🇯🇵 Japanese</option>
-                    <option value="ko">🇰🇷 Korean</option>
-                    <option value="ar">🇸🇦 Arabic</option>
-                    <option value="zh">🇨🇳 Chinese</option>
-                    <option value="fr">🇫🇷 French</option>
-                    <option value="de">🇩🇪 German</option>
-                    <option value="es">🇪🇸 Spanish</option>
-                    <option value="ru">🇷🇺 Russian</option>
-                    <option value="th">🇹🇭 Thai</option>
-                </select>
+            <div class="flex justify-between items-center mb-3 relative z-50">
+                
+                <div class="relative">
+                    <button id="dropdownBtn" onclick="toggleDropdown(event)" class="flex items-center gap-2 bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs md:text-sm outline-none hover:bg-white/10 hover:border-purple-500/50 transition min-w-[140px] justify-between text-left">
+                        <span id="selectedLabel" class="flex items-center gap-2">
+                            <span>🇮🇩</span> Indonesia
+                        </span>
+                        <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+
+                    <div id="dropdownMenu" class="hidden absolute top-full left-0 mt-2 w-64 max-h-80 bg-[#0f172a] border border-white/10 rounded-xl shadow-2xl overflow-hidden flex flex-col backdrop-blur-xl">
+                        <div class="p-2 border-b border-white/10 bg-[#0f172a] sticky top-0">
+                            <input type="text" id="langSearch" placeholder="Cari bahasa..." class="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white outline-none focus:border-purple-500 transition placeholder-slate-500" oninput="filterLanguages()">
+                        </div>
+                        <ul id="langList" class="overflow-y-auto lang-scrollbar p-1 flex-grow">
+                            </ul>
+                    </div>
+                </div>
+
+                <input type="hidden" id="targetLang" value="id">
 
                 <div id="apiBadge" class="hidden text-[10px] px-2 py-1 rounded-full border border-green-500/30 bg-green-500/10 text-green-400 font-mono">
                     <span id="apiName">Google</span>
                 </div>
             </div>
 
-            <div class="relative flex-grow h-full">
+            <div class="relative flex-grow h-full z-0">
                 <div id="loader" class="hidden absolute top-0 left-0 mt-2">
                     <div class="typing-indicator"><span></span><span></span><span></span></div>
                 </div>
