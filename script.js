@@ -1,4 +1,4 @@
-// UI Elements
+// --- ELEMEN UI ---
 const inputText = document.getElementById('inputText');
 const outputText = document.getElementById('outputText');
 const targetLang = document.getElementById('targetLang');
@@ -7,7 +7,7 @@ const apiBadge = document.getElementById('apiBadge');
 const apiName = document.getElementById('apiName');
 const charCount = document.getElementById('charCount');
 
-// Auto-resize & Count Char
+// Auto-resize & Hitung Karakter
 inputText.addEventListener('input', () => {
     charCount.innerText = inputText.value.length;
     inputText.style.height = 'auto'; 
@@ -28,10 +28,11 @@ function speakText() {
 function copyToClipboard() {
     if(outputText.value) {
         navigator.clipboard.writeText(outputText.value);
-        // Visual Feedback (Icon Goyang/Berubah dikit)
+        // Efek visual tombol
         const btn = event.currentTarget;
-        btn.classList.add('text-green-400');
-        setTimeout(() => btn.classList.remove('text-green-400'), 1000);
+        const originalIcon = btn.innerHTML;
+        btn.innerHTML = `<span class="text-green-400 text-xs font-bold">✓</span>`;
+        setTimeout(() => btn.innerHTML = originalIcon, 1000);
     }
 }
 
@@ -45,91 +46,100 @@ function clearText() {
     inputText.style.height = 'auto';
 }
 
-// --- ENGINE TERJEMAHAN (FIXED) ---
+// --- ENGINE TERJEMAHAN (MULTI-SERVER) ---
 async function translateEngine() {
     const text = inputText.value.trim();
     if (!text) {
-        alert("Mohon ketik teks terlebih dahulu!");
+        alert("Mohon ketik teks yang ingin diterjemahkan!");
         return;
     }
 
-    // Setup UI sebelum mulai
+    // Reset UI
     outputText.value = "";
+    outputText.placeholder = "Sedang menghubungkan ke server...";
     loader.classList.remove('hidden');
     apiBadge.classList.add('hidden');
     
-    const sl = 'auto'; // Source Language selalu Auto
-    const tl = targetLang.value; // Target Language dari dropdown
+    const sl = 'auto'; // Source Language
+    const tl = targetLang.value; // Target Language
 
-    // DAFTAR PROVIDER (Urutan diubah untuk stabilitas)
+    // DAFTAR SERVER (Prioritas Tinggi ke Rendah)
+    // Kita gunakan banyak mirror Lingva karena server utama sering down
     const providers = [
-        // 1. GOOGLE GTX (Prioritas Utama - Paling Stabil)
+        // 1. Lingva Mirror 1 (Sering Stabil)
         {
-            name: "Google",
-            fn: async () => {
-                // Endpoint GTX public google
-                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(text)}`;
-                const res = await fetch(url);
-                if (!res.ok) throw new Error('Google Block/Error');
-                const data = await res.json();
-                // Parsing hasil Google (karena bentuknya array bertingkat)
-                return data[0].map(x => x[0]).join('');
-            }
+            name: "Server A (Lingva)",
+            url: (t) => `https://lingva.ml/api/v1/${sl}/${tl}/${encodeURIComponent(t)}`,
+            type: "lingva"
         },
-        // 2. LINGVA (Cadangan 1)
+        // 2. Google GTX (Paling Cepat, tapi kadang kena CORS)
         {
-            name: "Lingva",
-            fn: async () => {
-                const res = await fetch(`https://lingva.ml/api/v1/${sl}/${tl}/${encodeURIComponent(text)}`);
-                if (!res.ok) throw new Error('Lingva Down');
-                const data = await res.json();
-                return data.translation;
-            }
+            name: "Server B (Google)",
+            url: (t) => `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&dt=t&q=${encodeURIComponent(t)}`,
+            type: "google"
         },
-        // 3. MYMEMORY (Cadangan 2)
+        // 3. Lingva Mirror 2 (Cadangan Eropa)
         {
-            name: "MyMemory",
-            fn: async () => {
-                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${tl}`; // MyMemory lebih bagus jika source inggris, tapi kita coba umum
-                const res = await fetch(url);
-                const data = await res.json();
-                if (data.responseStatus !== 200) throw new Error('MyMemory Limit');
-                return data.responseData.translatedText;
-            }
+            name: "Server C (Lingva EU)",
+            url: (t) => `https://lingva.se/api/v1/${sl}/${tl}/${encodeURIComponent(t)}`,
+            type: "lingva"
+        },
+        // 4. Lingva Mirror 3 (Cadangan Alternatif)
+        {
+            name: "Server D (Lingva Alt)",
+            url: (t) => `https://translate.ploud.jp/api/v1/${sl}/${tl}/${encodeURIComponent(t)}`,
+            type: "lingva"
         }
     ];
 
     let success = false;
+    let lastError = "";
 
-    // Loop Failover: Coba satu-satu sampai berhasil
+    // LOOP SEMUA SERVER SAMPAI BERHASIL
     for (const provider of providers) {
         try {
-            console.log(`Mencoba translate via: ${provider.name}...`);
-            const result = await provider.fn();
+            // Beri tahu user server mana yang sedang dicoba
+            outputText.placeholder = `Mencoba ${provider.name}...`;
+            console.log(`Requesting: ${provider.name}`);
+
+            const response = await fetch(provider.url(text));
             
-            if (result) {
-                outputText.value = result;
-                apiName.innerText = provider.name;
+            if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+            
+            const data = await response.json();
+            let resultText = "";
+
+            // Cara ambil data beda-beda tiap server
+            if (provider.type === "lingva") {
+                resultText = data.translation;
+            } else if (provider.type === "google") {
+                // Google formatnya array ribet: [[["Halo","Hello",,,]],,"en"]
+                resultText = data[0].map(x => x[0]).join('');
+            }
+
+            if (resultText) {
+                outputText.value = resultText;
+                apiName.innerText = provider.name; // Tampilkan nama server yang berhasil
                 apiBadge.classList.remove('hidden');
                 
-                // Ubah warna badge tergantung provider
-                const badgeClass = provider.name === "Google" 
-                    ? "border-green-500/30 bg-green-500/10 text-green-400" 
-                    : "border-orange-500/30 bg-orange-500/10 text-orange-400";
-                apiBadge.className = `text-[10px] px-2 py-1 rounded-full border ${badgeClass} font-mono`;
-
+                // Set warna badge sukses
+                apiBadge.className = `text-[10px] px-2 py-1 rounded-full border border-green-500/30 bg-green-500/10 text-green-400 font-mono`;
+                
                 success = true;
-                break; // Berhenti loop jika berhasil
+                break; // BERHENTI LOOP, SUDAH SUKSES!
             }
+
         } catch (err) {
-            console.warn(`Gagal via ${provider.name}:`, err);
-            // Lanjut ke provider berikutnya...
+            console.warn(`${provider.name} Gagal:`, err);
+            lastError = err.message;
+            // Jangan stop, lanjut ke provider berikutnya...
         }
     }
 
     loader.classList.add('hidden');
 
     if (!success) {
-        outputText.value = "Error: Gagal terhubung ke semua server terjemahan. Coba periksa koneksi internet Anda.";
+        outputText.placeholder = "Gagal Menerjemahkan.";
+        outputText.value = `ERROR: Semua server sibuk atau koneksi Anda memblokir akses.\n\nDetail: ${lastError}`;
     }
 }
