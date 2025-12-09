@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RifqyTranslate V2</title>
+    <title>RifqyTranslate</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
@@ -14,30 +14,29 @@
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        /* Hide scrollbar for textareas but keep functionality */
         textarea::-webkit-scrollbar { width: 0px; background: transparent; }
         
-        /* Animasi Loader Kecil */
+        /* Animasi Loader */
         .typing-indicator span {
             display: inline-block;
-            width: 4px;
-            height: 4px;
+            width: 5px;
+            height: 5px;
             background-color: #a855f7;
             border-radius: 50%;
             animation: typing 1s infinite ease-in-out;
-            margin: 0 1px;
+            margin: 0 2px;
         }
         .typing-indicator span:nth-child(1) { animation-delay: 0s; }
         .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
         .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
     </style>
 </head>
 <body class="bg-[#050505] text-white min-h-screen flex flex-col items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black">
 
     <div class="text-center mb-6">
-        <h1 class="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 tracking-tight">
-            RifqyTranslate <span class="text-xs border border-white/20 px-2 py-0.5 rounded-md text-slate-300 align-top ml-1">V2</span>
+        <h1 class="text-3xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 tracking-tight">
+            RifqyTranslate
         </h1>
     </div>
 
@@ -74,15 +73,10 @@
                     <option value="es">🇪🇸 Spanish</option>
                     <option value="ru">🇷🇺 Russian</option>
                     <option value="th">🇹🇭 Thai</option>
-                    <option value="vi">🇻🇳 Vietnamese</option>
-                    <option value="it">🇮🇹 Italian</option>
-                    <option value="pt">🇧🇷 Portuguese</option>
-                    <option value="tr">🇹🇷 Turkish</option>
-                    <option value="nl">🇳🇱 Dutch</option>
                 </select>
 
                 <div id="apiBadge" class="hidden text-[10px] px-2 py-1 rounded-full border border-green-500/30 bg-green-500/10 text-green-400 font-mono">
-                    <span id="apiName">Lingva</span>
+                    <span id="apiName">Google</span>
                 </div>
             </div>
 
@@ -97,17 +91,11 @@
             </div>
 
             <div class="flex justify-end items-center gap-2 mt-3 pt-3 border-t border-white/5">
-                
                 <button onclick="speakText()" class="p-2 rounded-full hover:bg-white/10 text-slate-400 hover:text-purple-400 transition" title="Dengarkan">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
                 </button>
-
                 <button onclick="copyToClipboard()" class="p-2 rounded-full hover:bg-white/10 text-slate-400 hover:text-blue-400 transition" title="Salin">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
                 </button>
             </div>
         </div>
@@ -119,7 +107,7 @@
     </button>
 
     <footer class="mt-8 text-slate-700 text-[10px]">
-        Failover System Enabled • Pure Static
+        Failover System Active • Pure Static
     </footer>
 
     <script src="script.js"></script>
