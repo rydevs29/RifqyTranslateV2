@@ -3,97 +3,109 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RifqyTranslate V2 - Ultimate Failover</title>
+    <title>RifqyTranslate V2</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        /* Animasi Loading */
-        .loader {
-            border: 3px solid rgba(255,255,255,0.1);
-            border-left-color: #a855f7;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Hide scrollbar for textareas but keep functionality */
+        textarea::-webkit-scrollbar { width: 0px; background: transparent; }
         
-        /* Glass Effect */
-        .glass {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        /* Animasi Loader Kecil */
+        .typing-indicator span {
+            display: inline-block;
+            width: 4px;
+            height: 4px;
+            background-color: #a855f7;
+            border-radius: 50%;
+            animation: typing 1s infinite ease-in-out;
+            margin: 0 1px;
         }
+        .typing-indicator span:nth-child(1) { animation-delay: 0s; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
     </style>
 </head>
-<body class="bg-[#0a0a0a] text-white min-h-screen flex flex-col items-center justify-center p-4 bg-[url('https://tailwindcss.com/_next/static/media/docs-dark@tinypng.1bbe175e.png')] bg-no-repeat bg-cover">
+<body class="bg-[#050505] text-white min-h-screen flex flex-col items-center justify-center p-4 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#050505] to-black">
 
-    <div class="text-center mb-8 relative z-10">
-        <h1 class="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 mb-2">
-            RifqyTranslate <span class="text-xs border border-white/20 px-2 py-0.5 rounded-full text-white align-top">V2</span>
+    <div class="text-center mb-6">
+        <h1 class="text-3xl md:text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-500 tracking-tight">
+            RifqyTranslate <span class="text-xs border border-white/20 px-2 py-0.5 rounded-md text-slate-300 align-top ml-1">V2</span>
         </h1>
-        <p class="text-gray-400 text-sm">Multi-Engine Failover System</p>
     </div>
 
-    <div class="glass w-full max-w-5xl rounded-3xl shadow-2xl overflow-hidden grid grid-cols-1 md:grid-cols-2 relative z-10">
+    <div class="glass-panel w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[400px] md:min-h-[350px]">
         
-        <div class="p-6 md:border-r border-white/10 flex flex-col h-[500px]">
-            <div class="flex justify-between items-center mb-4">
-                <select id="sourceLang" class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-blue-500 transition">
-                    <option value="auto">Auto Detect</option>
-                    <option value="en">English</option>
-                    <option value="id" selected>Indonesia</option>
-                    <option value="ja">Japanese</option>
-                    <option value="ko">Korean</option>
-                    <option value="ar">Arabic</option>
-                    <option value="es">Spanish</option>
-                    <option value="fr">French</option>
-                    <option value="ru">Russian</option>
-                </select>
-                <button onclick="clearText()" class="text-xs text-gray-500 hover:text-white transition">Clear</button>
+        <div class="flex-1 p-5 flex flex-col border-b md:border-b-0 md:border-r border-white/5 bg-white/[0.02]">
+            <div class="flex justify-between items-center mb-3">
+                <div class="px-3 py-1.5 rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold">
+                    Auto Detect
+                </div>
+                <button onclick="clearText()" class="text-xs text-slate-500 hover:text-white transition px-2 py-1">Hapus</button>
             </div>
             
             <textarea id="inputText" 
-                class="w-full flex-grow bg-transparent outline-none text-lg resize-none placeholder-gray-600"
-                placeholder="Ketik atau tempel teks di sini..."></textarea>
+                class="w-full flex-grow bg-transparent outline-none text-base md:text-lg resize-none placeholder-slate-700 leading-relaxed"
+                placeholder="Ketik teks disini..."></textarea>
             
-            <div class="mt-2 text-right text-xs text-gray-600">
+            <div class="mt-2 text-right text-[10px] text-slate-600 font-mono">
                 <span id="charCount">0</span> chars
             </div>
         </div>
 
-        <div class="p-6 bg-black/20 flex flex-col h-[500px] relative">
-            <div class="flex justify-between items-center mb-4">
-                <select id="targetLang" class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm outline-none focus:border-purple-500 transition">
-                    <option value="id">Indonesia</option>
-                    <option value="en" selected>English</option>
-                    <option value="ja">Japanese</option>
-                    <option value="ko">Korean</option>
-                    <option value="ar">Arabic</option>
-                    <option value="de">German</option>
+        <div class="flex-1 p-5 flex flex-col bg-[#0a0a0a]/50 relative">
+            <div class="flex justify-between items-center mb-3">
+                <select id="targetLang" class="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-xs md:text-sm outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/50 transition cursor-pointer hover:bg-white/10 w-40 md:w-auto">
+                    <option value="id" selected>🇮🇩 Indonesia</option>
+                    <option value="en">🇺🇸 English</option>
+                    <option value="ja">🇯🇵 Japanese</option>
+                    <option value="ko">🇰🇷 Korean</option>
+                    <option value="ar">🇸🇦 Arabic</option>
+                    <option value="zh">🇨🇳 Chinese</option>
+                    <option value="fr">🇫🇷 French</option>
+                    <option value="de">🇩🇪 German</option>
+                    <option value="es">🇪🇸 Spanish</option>
+                    <option value="ru">🇷🇺 Russian</option>
+                    <option value="th">🇹🇭 Thai</option>
+                    <option value="vi">🇻🇳 Vietnamese</option>
+                    <option value="it">🇮🇹 Italian</option>
+                    <option value="pt">🇧🇷 Portuguese</option>
+                    <option value="tr">🇹🇷 Turkish</option>
+                    <option value="nl">🇳🇱 Dutch</option>
                 </select>
-                
-                <div id="apiBadge" class="hidden text-[10px] px-2 py-1 rounded-full border border-green-500/30 bg-green-500/10 text-green-400">
-                    Via: <span id="apiName">Reading...</span>
+
+                <div id="apiBadge" class="hidden text-[10px] px-2 py-1 rounded-full border border-green-500/30 bg-green-500/10 text-green-400 font-mono">
+                    <span id="apiName">Lingva</span>
                 </div>
             </div>
 
-            <div class="relative flex-grow">
-                <div id="loader" class="hidden absolute inset-0 flex flex-col items-center justify-center z-20">
-                    <div class="loader mb-2"></div>
-                    <span class="text-xs text-purple-400 animate-pulse">Searching best server...</span>
+            <div class="relative flex-grow h-full">
+                <div id="loader" class="hidden absolute top-0 left-0 mt-2">
+                    <div class="typing-indicator"><span></span><span></span><span></span></div>
                 </div>
 
                 <textarea id="outputText" readonly
-                    class="w-full h-full bg-transparent outline-none text-lg resize-none text-blue-100 placeholder-gray-700"
-                    placeholder="Hasil terjemahan..."></textarea>
+                    class="w-full h-full bg-transparent outline-none text-base md:text-lg resize-none text-purple-100 placeholder-slate-700 leading-relaxed min-h-[150px]"
+                    placeholder="Terjemahan..."></textarea>
             </div>
 
-            <div class="mt-4 flex justify-end">
-                <button onclick="copyToClipboard()" class="p-2 hover:bg-white/10 rounded-full transition group" title="Salin">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div class="flex justify-end items-center gap-2 mt-3 pt-3 border-t border-white/5">
+                
+                <button onclick="speakText()" class="p-2 rounded-full hover:bg-white/10 text-slate-400 hover:text-purple-400 transition" title="Dengarkan">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                    </svg>
+                </button>
+
+                <button onclick="copyToClipboard()" class="p-2 rounded-full hover:bg-white/10 text-slate-400 hover:text-blue-400 transition" title="Salin">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                     </svg>
                 </button>
@@ -102,12 +114,12 @@
     </div>
 
     <button onclick="translateEngine()" 
-        class="mt-8 px-10 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full font-bold text-white shadow-[0_0_20px_rgba(168,85,247,0.4)] hover:shadow-[0_0_30px_rgba(168,85,247,0.6)] hover:scale-105 active:scale-95 transition transform border border-white/10">
+        class="mt-6 w-full max-w-[200px] py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl font-bold text-white shadow-lg shadow-purple-500/20 hover:scale-105 active:scale-95 transition-all text-sm tracking-wide">
         TERJEMAHKAN
     </button>
 
-    <footer class="mt-12 text-gray-600 text-xs">
-        System by RifqyDev • Backup Protocol Enabled
+    <footer class="mt-8 text-slate-700 text-[10px]">
+        Failover System Enabled • Pure Static
     </footer>
 
     <script src="script.js"></script>
