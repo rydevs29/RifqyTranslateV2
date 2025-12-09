@@ -213,7 +213,7 @@ function clearText() {
 async function translateEngine() {
     const text = inputText.value.trim();
     if (!text) {
-        alert("Mohon ketik teks yang ingin diterjemahkan!");
+        alert("Please type first");
         return;
     }
 
@@ -262,20 +262,20 @@ async function translateEngine() {
             if (data.responseStatus !== 200) throw new Error('Limit');
             return data.responseData.translatedText;
         }, type: "custom_fetch" },
-        { name: "Server 12 (Libre DE)", fn: (t) => libreFetch("https://de.libretranslate.com/translate", t), type: "libre" },
-        { name: "Server 13 (Libre Argos)", fn: (t) => libreFetch("https://translate.argosopentech.com/translate", t), type: "libre" },
-        { name: "Server 14 (Libre Fedilab)", fn: (t) => libreFetch("https://translate.fedilab.app/translate", t), type: "libre" },
-        { name: "Server 15 (Libre Terra)", fn: (t) => libreFetch("https://translate.terraprint.co/translate", t), type: "libre" },
-        { name: "Server 16 (Libre Calyx)", fn: (t) => libreFetch("https://translate.calyxos.org/translate", t), type: "libre" },
-        { name: "Server 17 (Libre Ataraxia)", fn: (t) => libreFetch("https://tr.ataraxiadev.com/translate", t), type: "libre" },
-        { name: "Server 18 (Libre Zilly)", fn: (t) => libreFetch("https://trans.zillyhuhn.com/translate", t), type: "libre" },
-        { name: "Server 19 (Libre PnlPal)", fn: (t) => libreFetch("https://api.pnlpal.dev/translate", t), type: "libre" },
-        { name: "Server 20 (Libre Rontu)", fn: (t) => libreFetch("https://translate.rontu.ru/translate", t), type: "libre" },
-        { name: "Server 21 (Libre Tchncs)", fn: (t) => libreFetch("https://translate.tchncs.de/translate", t), type: "libre" },
-        { name: "Server 22 (Libre 766)", fn: (t) => libreFetch("https://translate.766.com/translate", t), type: "libre" },
-        { name: "Server 23 (Libre Gorf)", fn: (t) => libreFetch("https://translate.gorf.club/translate", t), type: "libre" },
-        { name: "Server 24 (Libre Castle)", fn: (t) => libreFetch("https://translate.fortress.one/translate", t), type: "libre" },
-        { name: "Server 25 (Libre Haddock)", fn: (t) => libreFetch("https://translate.haddock.cc/translate", t), type: "libre" }
+        { name: "Server (Libre DE)", fn: (t) => libreFetch("https://de.libretranslate.com/translate", t), type: "libre" },
+        { name: "Server (Libre Argos)", fn: (t) => libreFetch("https://translate.argosopentech.com/translate", t), type: "libre" },
+        { name: "Server (Libre Fedilab)", fn: (t) => libreFetch("https://translate.fedilab.app/translate", t), type: "libre" },
+        { name: "Server (Libre Terra)", fn: (t) => libreFetch("https://translate.terraprint.co/translate", t), type: "libre" },
+        { name: "Server (Libre Calyx)", fn: (t) => libreFetch("https://translate.calyxos.org/translate", t), type: "libre" },
+        { name: "Server (Libre Ataraxia)", fn: (t) => libreFetch("https://tr.ataraxiadev.com/translate", t), type: "libre" },
+        { name: "Server (Libre Zilly)", fn: (t) => libreFetch("https://trans.zillyhuhn.com/translate", t), type: "libre" },
+        { name: "Server (Libre PnlPal)", fn: (t) => libreFetch("https://api.pnlpal.dev/translate", t), type: "libre" },
+        { name: "Server (Libre Rontu)", fn: (t) => libreFetch("https://translate.rontu.ru/translate", t), type: "libre" },
+        { name: "Server (Libre Tchncs)", fn: (t) => libreFetch("https://translate.tchncs.de/translate", t), type: "libre" },
+        { name: "Server (Libre 766)", fn: (t) => libreFetch("https://translate.766.com/translate", t), type: "libre" },
+        { name: "Server (Libre Gorf)", fn: (t) => libreFetch("https://translate.gorf.club/translate", t), type: "libre" },
+        { name: "Server (Libre Castle)", fn: (t) => libreFetch("https://translate.fortress.one/translate", t), type: "libre" },
+        { name: "Server (Libre Haddock)", fn: (t) => libreFetch("https://translate.haddock.cc/translate", t), type: "libre" }
     ];
 
     let success = false;
